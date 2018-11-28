@@ -5,6 +5,7 @@
  */
 package pong;
 
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -27,20 +28,28 @@ public class PongUI extends javax.swing.JFrame {
     }
     
     static boolean player1Left, player1Right, player2Left, player2Right, paused = true;
-    //angle
+    double dir = Math.toRadians(127);
+    double dirX;
+    double dirY;
+    int rate = 5;
     
     enum move {
         player1Left, player1Right, player2Left, player2Right;
     }
     
     private void countdown() throws InterruptedException {
+        dirX = jPanel1.getWidth()/2 - ball.getWidth()/2;
+        dirY = jPanel1.getHeight()/2 - ball.getHeight()/2;
         count.setVisible(true);
+        ball.setVisible(false);
+        
         for (int i = 3; i > 0; i--) {
             count.setText(Integer.toString(i));
             Thread.sleep(1000);
         }
         
         count.setVisible(false);
+        ball.setVisible(true);
         paused = false;
     }
     
@@ -49,13 +58,60 @@ public class PongUI extends javax.swing.JFrame {
             obj.setLocation(5, obj.getY());
         } else if (obj.getWidth() + obj.getX() >= jPanel1.getWidth()) {
             obj.setLocation(jPanel1.getWidth() - obj.getWidth() - 5, obj.getY());
-        }
-        
+        } 
+
         return obj.getX() > 0 && obj.getX() + obj.getWidth() < jPanel1.getWidth();
     }
     
+    private boolean paddleCollision(JPanel obj) {
+        return ball.getX() + ball.getWidth() - obj.getX() >= 0
+                && ball.getX() - obj.getX() - obj.getWidth() <= 0
+                && (ball.getY() - obj.getY() <= obj.getHeight()
+                || obj.getY() + obj.getHeight() - ball.getY() - ball.getHeight() <= obj.getHeight());
+    }
+    
+    private boolean inBoundsBall() {
+        return ball.getX() >= 0 && ball.getX() + ball.getWidth() <= jPanel1.getWidth() 
+                && ball.getY() >= 0 && ball.getY() + ball.getHeight() <= jPanel1.getHeight();
+    }
+    
     private void moveBall() {
+        for (Component c: jPanel1.getComponents()) {
+            if (c instanceof JPanel) { // check paddle collision
+                if (paddleCollision((JPanel) c)) {
+                    System.out.println("we're in");
+                }
+            }
+        } 
         
+        if (!inBoundsBall()) { // check wall collision
+            if (Math.toDegrees(dir) == 0) {
+                dir = 180;
+            } else if (Math.toDegrees(dir) == 180) {
+                dir = 0;
+            } else {
+                dir = -dir;
+            }
+            
+            if (ball.getX() <= 0) { // check left-right collision
+                dirX = 1;
+                rate = -rate;
+            } else if (ball.getX() + ball.getWidth() >= jPanel1.getWidth()) {
+                dirX = jPanel1.getWidth() - ball.getWidth() - 1;
+                rate= -rate;
+            }
+            
+            if (ball.getY() <= 0) { // check top-bottom collision
+                dirY = 1;
+            } else if (ball.getY() + ball.getHeight() >= jPanel1.getHeight()) {
+                dirY = jPanel1.getHeight() - ball.getHeight() - 1;
+            }
+        }
+        
+        dirX += Math.cos(dir)/rate;
+        dirY += Math.sin(dir)/rate;
+        ball.setLocation((int)(.5 + dirX), (int)(.5 + dirY));
+        //System.out.println(Math.cos(dir)/rate + "\t" + Math.sin(dir)/rate + "\t" + Math.toDegrees(dir));
     }
     
     private void movePaddle(move c) {

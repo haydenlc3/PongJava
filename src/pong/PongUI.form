@@ -61,7 +61,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="423" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="ball" min="-2" pref="50" max="-2" attributes="0"/>
+                              <Component id="ball" min="-2" max="-2" attributes="0"/>
                               <Component id="count" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -78,7 +78,7 @@
                   <EmptySpace pref="103" max="32767" attributes="0"/>
                   <Component id="count" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="ball" min="-2" pref="50" max="-2" attributes="0"/>
+                  <Component id="ball" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="295" max="-2" attributes="0"/>
                   <Component id="player1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
